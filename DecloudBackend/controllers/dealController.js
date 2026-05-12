@@ -200,6 +200,7 @@ async function createDealsForFile(fileId) {
         peerEscrowWei:    peerEscrowWei.toString(),
         chunkHashes,
         escrowAddress,
+        chainId:          CHAIN_ID.toString(),
       });
 
     } catch (err) {
@@ -540,6 +541,7 @@ const retryDeal = async (req, res, next) => {
         peerEscrowWei:  d.peer_escrow_wei,
         chunkHashes,
         escrowAddress,
+        chainId:        CHAIN_ID.toString(),
       });
     }
 

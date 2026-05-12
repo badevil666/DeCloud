@@ -535,10 +535,12 @@ async function signAndPostDeal(msg: Record<string, unknown>): Promise<void> {
 
     const { ethers } = await import('ethers');
 
+    const msgChainId = msg['chainId'] ? BigInt(msg['chainId'] as string) : CHAIN_ID;
+
     const domain = {
         name:              'StorageEscrow',
         version:           '1',
-        chainId:           CHAIN_ID,
+        chainId:           msgChainId,
         verifyingContract: ethers.getAddress(escrowAddress),
     };
 
