@@ -204,10 +204,7 @@ router.patch('/capacity', authenticate('STORAGE_PEER'), async (req, res) => {
 
   try {
     await query(
-      `UPDATE storage_peers
-          SET declared_capacity = $1,
-              available_space   = GREATEST(0, $1 - (declared_capacity - available_space))
-        WHERE peer_id = $2`,
+      'UPDATE storage_peers SET declared_capacity = $1, available_space = $1 WHERE peer_id = $2',
       [Math.round(capacityBytes), peerId],
     );
     res.json({ updated: true, capacityBytes: Math.round(capacityBytes) });
