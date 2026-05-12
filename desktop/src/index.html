@@ -1,0 +1,1898 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeCloud</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --primary-hover: #5a52d5;
+            --bg: #F8FAFC;
+            --sidebar-bg: #FFFFFF;
+            --text-main: #1E293B;
+            --text-light: #64748B;
+            --success: #10B981;
+            --border: #E2E8F0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+        }
+
+        .brand {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding-left: 8px;
+        }
+
+        .nav-item {
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            color: var(--text-light);
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+        }
+
+        .nav-item:hover {
+            background: #EEF2FF;
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(108, 99, 255, 0.2);
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .status-badge {
+            background: #ECFDF5;
+            color: var(--success);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #D1FAE5;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px #D1FAE5;
+        }
+
+        /* --- CARDS --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        .card-label {
+            color: var(--text-light);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .card-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .card-sub {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        /* --- TABLES & LISTS --- */
+        .table-container {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .table-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .table-head {
+            background: #F8FAFC;
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        /* --- BUTTONS & INPUTS --- */
+        input[type="password"],
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+        }
+
+        textarea {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            transition: border 0.2s;
+            resize: vertical;
+            min-height: 100px;
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+        }
+
+        textarea:focus {
+            border-color: var(--primary);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            background: white;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-refresh {
+            background: white;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-refresh:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: #F8FAFC;
+        }
+
+        /* --- WALLET CHOICE SCREEN --- */
+        .wallet-choice-btns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        /* --- MNEMONIC GRID --- */
+        .mnemonic-warning {
+            background: #FEF3C7;
+            border: 1px solid #FCD34D;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #92400E;
+            font-weight: 500;
+        }
+
+        .mnemonic-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #F8FAFC;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .mnemonic-word {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .mnemonic-num {
+            color: var(--text-light);
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 18px;
+        }
+
+        .mnemonic-copy-btn {
+            background: #F1F5F9;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 13px;
+            display: block;
+            width: 100%;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+
+        .mnemonic-copy-btn:hover {
+            background: #EEF2FF;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-confirm {
+            width: 100%;
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+
+        .btn-confirm:hover {
+            background: #059669;
+        }
+
+        /* --- LOGS --- */
+        .console-container {
+            background: #1E293B;
+            color: #10B981;
+            padding: 24px;
+            border-radius: 16px;
+            font-family: 'Courier New', monospace;
+            height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin-bottom: 12px;
+            font-size: 14px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 8px;
+        }
+
+        .log-time {
+            color: #94A3B8;
+            margin-right: 12px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-label {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        /* --- INLINE FEEDBACK --- */
+        .feedback-msg {
+            margin-top: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .feedback-error {
+            background: #FEF2F2;
+            color: #B91C1C;
+            border: 1px solid #FECACA;
+        }
+
+        .feedback-success {
+            background: #ECFDF5;
+            color: #065F46;
+            border: 1px solid #A7F3D0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="sidebar">
+        <div class="brand">🌨️ DeCloud</div>
+        <div class="nav-item active" onclick="switchTab('dashboard', event)">📊 Dashboard</div>
+        <div class="nav-item" onclick="switchTab('wallet', event)">💰 Wallet</div>
+        <div class="nav-item" onclick="switchTab('profile', event)">👤 Profile</div>
+        <div class="nav-item" onclick="switchTab('deals', event)">📋 Deals</div>
+        <div class="nav-item" onclick="switchTab('files', event)">📁 Files</div>
+        <div class="nav-item" onclick="switchTab('settings', event)">⚙️ Settings</div>
+    </nav>
+
+    <main class="main-content">
+
+        <!-- ═══ DASHBOARD ═══ -->
+        <div id="view-dashboard">
+            <div class="header-row">
+                <h2>Node Overview</h2>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <div class="status-badge" id="ws-badge" style="background: #F8FAFC; border-color: var(--border); color: var(--text-light);">
+                        <div class="status-dot" id="ws-dot" style="background: var(--text-light); box-shadow: none;"></div>
+                        <span id="ws-text">WS: Offline</span>
+                    </div>
+                    <button id="reconnect-btn" onclick="doReconnect()"
+                        style="font-size:11px; padding:4px 10px; border-radius:6px; border:1px solid var(--border);
+                               background:#F8FAFC; color:var(--text-light); cursor:pointer;">
+                        ↺ Reconnect
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <div class="card-label">Files Hosted</div>
+                    <div class="card-value" id="dashboard-files">0</div>
+                    <div class="card-sub">Local storage</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Storage Used</div>
+                    <div class="card-value" id="dashboard-storage">0 MB</div>
+                    <div class="card-sub">Available: 500 GB</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Total Earnings</div>
+                    <div class="card-value" id="dashboard-earnings">0.00</div>
+                    <div class="card-sub">DCLD Tokens</div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 16px;">Activity Log</h3>
+            <div class="console-container" id="console-logs">
+                <div class="log-entry"><span class="log-time">System</span> Node initialized. Waiting for files...</div>
+            </div>
+        </div>
+
+        <!-- ═══ WALLET ═══ -->
+        <div id="view-wallet" style="display: none;">
+            <div class="header-row">
+                <h2>Wallet</h2>
+                <button class="btn-refresh" id="wallet-refresh-btn" onclick="refreshBalance()" style="display: none;">🔄
+                    Refresh</button>
+            </div>
+
+            <!-- Setup: choose create or import -->
+            <div id="wallet-choice" class="card" style="max-width: 560px; margin: 0 auto;">
+                <div class="card-label">Connect Your Wallet</div>
+                <p style="margin: 8px 0 24px; color: var(--text-light); line-height: 1.6;">
+                    Create a new wallet or import an existing one using your 12-word mnemonic phrase.
+                </p>
+                <div class="wallet-choice-btns">
+                    <button class="btn-primary" id="btn-create-wallet" onclick="startCreateWallet()">
+                        ✨ Create New Wallet
+                    </button>
+                    <button class="btn-secondary" onclick="showImportForm()">
+                        🔑 Import Existing
+                    </button>
+                </div>
+                <div id="choice-error" class="feedback-msg feedback-error"></div>
+            </div>
+
+            <!-- Mnemonic backup display (after create) -->
+            <div id="wallet-mnemonic" class="card" style="max-width: 560px; margin: 0 auto; display: none;">
+                <div class="card-label" style="margin-bottom: 12px;">✨ Wallet Created — Back Up Your Mnemonic</div>
+                <div class="mnemonic-warning">
+                    ⚠️ Write these 12 words down in order and store them somewhere safe.<br>
+                    <strong>They cannot be recovered if lost.</strong>
+                </div>
+                <div class="mnemonic-grid" id="mnemonic-grid"></div>
+                <button class="mnemonic-copy-btn" onclick="copyMnemonic()">📋 Copy All Words</button>
+                <button class="btn-confirm" onclick="confirmMnemonicBackup()">
+                    ✅ I've Backed Up My Mnemonic — Continue
+                </button>
+            </div>
+
+            <!-- Import form -->
+            <div id="wallet-import" class="card" style="max-width: 560px; margin: 0 auto; display: none;">
+                <div class="card-label" style="margin-bottom: 12px;">🔑 Import Wallet</div>
+                <p style="margin-bottom: 20px; color: var(--text-light); font-size: 14px; line-height: 1.6;">
+                    Enter your 12-word BIP-39 mnemonic phrase, separated by spaces.
+                </p>
+                <textarea id="mnemonic-input"
+                    placeholder="apple banana car door elephant fox grape hat iris jump kite lemon" autocomplete="off"
+                    autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+                <button class="btn-primary" id="btn-import" onclick="doImportWallet()">Import Wallet</button>
+                <button class="btn-secondary" style="margin-top: 10px;" onclick="cancelImport()">Cancel</button>
+                <div id="import-error" class="feedback-msg feedback-error"></div>
+            </div>
+            
+            <!-- Connected: balances + history -->
+            <div id="wallet-connected-view" style="display: none;">
+                <div class="grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 24px;">
+                    <div class="card">
+                        <div class="card-label">ETH Balance</div>
+                        <div class="card-value" id="wallet-eth">0.0000</div>
+                        <div class="card-sub">Sepolia Testnet</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-label">DCLD Balance</div>
+                        <div class="card-value" id="wallet-dcld">0.0000</div>
+                        <div class="card-sub">DeCloud Token</div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: 24px;">
+                    <div class="card-label" style="margin-bottom: 8px;">Wallet Address</div>
+                    <div id="wallet-address"
+                        style="font-size: 14px; font-family: monospace; color: var(--text-light); word-break: break-all; background: #F8FAFC; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+                        0x...</div>
+                </div>
+
+                <div style="margin-bottom: 24px;">
+                    <button onclick="disconnectWallet()" style="background: transparent; border: 1px solid #EF4444; color: #EF4444; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600;">
+                        🔌 Disconnect Wallet
+                    </button>
+                </div>
+
+                <h3 style="margin-bottom: 16px;">Transaction History</h3>
+                <div class="table-container">
+                    <div class="table-row table-head">
+                        <div>Date</div>
+                        <div>Type</div>
+                        <div>Amount</div>
+                        <div>Tx Hash</div>
+                    </div>
+                    <div id="tx-table-body">
+                        <div style="padding:16px;color:var(--text-light);font-size:13px;">Loading transactions...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ PROFILE ═══ -->
+        <div id="view-profile" style="display: none;">
+            <div class="header-row">
+                <h2>My Profile</h2>
+            </div>
+
+            <!-- State A: No wallet connected -->
+            <div id="profile-no-wallet" class="card"
+                style="max-width: 560px; margin: 0 auto; text-align: center; padding: 48px 32px;">
+                <div style="font-size: 48px; margin-bottom: 16px;">🔗</div>
+                <h3 style="margin-bottom: 12px; font-size: 20px;">First, connect your wallet to get started</h3>
+                <p style="color: var(--text-light); margin-bottom: 28px; line-height: 1.6;">
+                    You need a wallet to access your profile and node identity.
+                </p>
+                <button class="btn-primary" style="max-width: 240px; margin: 0 auto;"
+                    onclick="switchTab('wallet', event)">
+                    💰 Go to Wallet
+                </button>
+            </div>
+
+            <!-- State B: Wallet connected, not authenticated -->
+            <div id="profile-auth-prompt" style="max-width: 560px; margin: 0 auto; display: none;">
+                <div style="text-align: center; margin-bottom: 28px;">
+                    <div style="font-size: 40px; margin-bottom: 12px;">🔐</div>
+                    <h3 style="font-size: 20px; margin-bottom: 8px;">Log in or Register</h3>
+                    <p style="color: var(--text-light); font-size: 14px; line-height: 1.6;">
+                        Authenticate your wallet with the DeCloud network to access your profile.
+                    </p>
+                </div>
+
+                <!-- Login card -->
+                <div class="card" style="margin-bottom: 16px;">
+                    <div class="card-label" style="margin-bottom: 8px;">Existing Peer</div>
+                    <p style="color: var(--text-light); font-size: 14px; margin-bottom: 20px; line-height: 1.5;">
+                        Already registered on DeCloud? Sign in with your wallet.
+                    </p>
+                    <button class="btn-primary" id="btn-peer-login" onclick="doPeerLogin()">🔑 Login</button>
+                    <div id="login-error" class="feedback-msg feedback-error"></div>
+                </div>
+
+                <!-- Register card -->
+                <div class="card">
+                    <div class="card-label" style="margin-bottom: 8px;">New Peer</div>
+                    <p style="color: var(--text-light); font-size: 14px; margin-bottom: 20px; line-height: 1.5;">
+                        First time? Register your node as a storage peer.
+                    </p>
+                    <label style="font-weight: 600; font-size: 14px; display: block; margin-bottom: 8px;">Declared
+                        Storage Capacity (GB)</label>
+                    <input type="number" id="reg-capacity-auth" value="100" min="1" style="margin-bottom: 16px;">
+                    <button class="btn-primary" id="btn-peer-register" onclick="doPeerRegister()">📝 Register</button>
+                    <div id="register-error" class="feedback-msg feedback-error"></div>
+                </div>
+            </div>
+
+            <!-- State C: Authenticated — node identity -->
+            <div id="profile-identity" style="display: none;">
+                <div class="card" style="margin-bottom: 24px; border-left: 4px solid var(--primary);">
+                    <div class="header-row" style="margin-bottom: 16px;">
+                        <div class="card-label">Node Identity</div>
+                        <div
+                            style="background: #ECFDF5; color: var(--success); padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+                            ✅ Authenticated</div>
+                    </div>
+                    <div style="display: flex; gap: 40px; margin-bottom: 24px;">
+                        <div>
+                            <div class="card-sub">Reputation Score</div>
+                            <div style="font-size: 20px; font-weight: 700;">💯 98/100</div>
+                        </div>
+                        <div>
+                            <div class="card-sub">Node Uptime</div>
+                            <div style="font-size: 20px; font-weight: 700;">⏱️ 99.9%</div>
+                        </div>
+                    </div>
+                    <div class="card-label" style="margin-bottom: 8px;">Wallet Address</div>
+                    <div id="profile-address"
+                        style="font-size: 13px; font-family: monospace; color: var(--text-light); word-break: break-all; background: #F8FAFC; padding: 12px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 24px;">
+                        0x...</div>
+                    <button class="btn-secondary" style="border-color: #EF4444; color: #EF4444;" id="btn-peer-logout"
+                        onclick="doPeerLogout()">
+                        🚪 Logout from DeCloud
+                    </button>
+                </div>
+
+                <!-- DCLD Spending Approval -->
+                <div class="card" style="margin-top: 16px;">
+                    <div class="card-label" style="margin-bottom: 8px;">DCLD Token Approval</div>
+                    <p style="color: var(--text-light); font-size: 13px; margin-bottom: 16px; line-height: 1.5;">
+                        The StorageEscrow contract needs approval to move DCLD tokens on your behalf when a deal is executed.
+                        This must be done at least once before you can participate in storage deals.
+                    </p>
+                    <button class="btn-primary" id="btn-approve-dcld" onclick="doApproveDcld()"
+                        style="max-width: 260px;">
+                        ✅ Approve DCLD Spending
+                    </button>
+                    <div id="approve-dcld-result" class="feedback-msg" style="margin-top: 12px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ DEALS ═══ -->
+        <div id="view-deals" style="display: none;">
+            <div class="header-row">
+                <h2>Deals &amp; Contracts</h2>
+            </div>
+
+            <!-- Auto-sign toggle -->
+            <div class="card" style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <div style="font-weight: 600; font-size: 14px;">Auto-sign deals</div>
+                    <div style="font-size: 12px; color: var(--text-light); margin-top: 2px;">
+                        Automatically sign storage deals when they arrive
+                    </div>
+                </div>
+                <label style="position: relative; display: inline-block; width: 48px; height: 26px; flex-shrink: 0;">
+                    <input type="checkbox" id="toggle-auto-sign" style="opacity:0;width:0;height:0;"
+                        onchange="onAutoSignToggle(this.checked)">
+                    <span id="toggle-slider" style="
+                        position: absolute; cursor: pointer; inset: 0;
+                        background: #ccc; border-radius: 26px; transition: .3s;
+                    "></span>
+                </label>
+            </div>
+
+            <!-- Pending approval section -->
+            <div id="deals-pending-header" style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+                color: var(--text-light); text-transform: uppercase; margin-bottom: 8px; display: none;">
+                Pending Approval
+            </div>
+            <div id="deals-pending-list"></div>
+
+            <!-- Recent deals section -->
+            <div id="deals-recent-header" style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+                color: var(--text-light); text-transform: uppercase; margin: 16px 0 8px; display: none;">
+                Recent
+            </div>
+            <div id="deals-recent-list"></div>
+
+            <div id="deals-empty" style="color: var(--text-light); font-size: 14px; text-align: center; padding: 40px 0;">
+                No deals yet. Storage deals will appear here when peers upload files.
+            </div>
+        </div>
+
+        <!-- ═══ FILES ═══ -->
+        <div id="view-files" style="display: none;">
+            <div class="header-row">
+                <h2>Stored Files</h2>
+                <button class="btn-refresh" onclick="loadPeerFiles()">🔄 Refresh</button>
+            </div>
+            <div id="files-loading" style="color:var(--text-light);font-size:14px;padding:40px 0;text-align:center;display:none;">
+                Loading…
+            </div>
+            <div id="files-error" style="color:#EF4444;font-size:13px;padding:20px 0;display:none;"></div>
+            <div id="files-empty" style="color:var(--text-light);font-size:14px;text-align:center;padding:40px 0;display:none;">
+                No files stored yet. Files will appear here once storage deals are settled.
+            </div>
+            <div id="files-list"></div>
+        </div>
+
+        <!-- ═══ SETTINGS ═══ -->
+        <div id="view-settings" style="display: none;">
+            <div class="header-row">
+                <h2>Settings</h2>
+            </div>
+
+            <!-- Network section -->
+            <div class="card" style="max-width: 600px; margin-bottom: 24px;">
+                <div class="card-label">Network</div>
+                <p style="margin: 8px 0 20px; color: var(--text-light); font-size: 14px; line-height: 1.5;">
+                    URLs for the DeCloud API and relay server. Changes take effect on next connection.
+                </p>
+                <label style="font-weight: 600; font-size: 14px; display: block; margin-bottom: 8px;">API Base URL</label>
+                <input type="text" id="api-base-url" placeholder="http://api.decloud.network" style="margin-bottom: 4px;">
+                <label style="font-weight: 600; font-size: 14px; display: block; margin-bottom: 8px;">Relay Server URL</label>
+                <input type="text" id="relay-base-url" placeholder="http://relay.decloud.network" style="margin-bottom: 4px;">
+                <label style="font-weight: 600; font-size: 14px; display: block; margin-bottom: 8px;">Blockchain RPC URL</label>
+                <input type="text" id="rpc-url" placeholder="http://127.0.0.1:8545  (leave blank for default)" style="margin-bottom: 12px;">
+                <button class="btn-primary" onclick="saveNetworkSettings()">💾 Save</button>
+                <button class="btn-secondary" onclick="fetchNetworkConfig()" style="margin-left: 10px;">🔄 Fetch Contract Addresses</button>
+                <div id="api-url-feedback" class="feedback-msg"></div>
+            </div>
+
+            <!-- Storage capacity section -->
+            <div class="card" style="max-width: 600px; margin-bottom: 24px;">
+                <div class="card-label">Storage</div>
+                <p style="margin: 8px 0 20px; color: var(--text-light); font-size: 14px; line-height: 1.5;">
+                    How much disk space this node offers to the network. Stored as bytes internally.
+                </p>
+                <label style="font-weight: 600; font-size: 14px; display: block; margin-bottom: 8px;">Available Storage (GB)</label>
+                <input type="number" id="storage-capacity-gb" min="1" placeholder="e.g. 100" style="margin-bottom: 12px;">
+                <button class="btn-primary" onclick="saveStorageCapacity()">💾 Save</button>
+                <div id="storage-capacity-feedback" class="feedback-msg"></div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        // ─── App state ────────────────────────────────────────────────────────
+        let _storedMnemonic = null;       // held in memory only until backup confirmed
+        let _walletData = null;           // latest wallet-connected payload
+        let _isAuthenticated = false;     // DeCloud API auth result
+        let _mnemonicPending = false;     // true while backup screen is showing
+        let _totalEarnings = 0;           // cumulative DCLD earned this session
+
+        // ─── Navigation ───────────────────────────────────────────────────────
+        function switchTab(tabName, evt) {
+            ['dashboard', 'wallet', 'profile', 'deals', 'files', 'settings'].forEach(view => {
+                const el = document.getElementById(`view-${view}`);
+                if (el) el.style.display = 'none';
+            });
+            document.getElementById(`view-${tabName}`).style.display = 'block';
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            if (evt && evt.currentTarget) evt.currentTarget.classList.add('active');
+            if (tabName === 'settings') loadSettings();
+            if (tabName === 'deals') loadDealsTab();
+            if (tabName === 'files') loadPeerFiles();
+        }
+
+        // ─── Wallet tab: Create ───────────────────────────────────────────────
+        async function startCreateWallet() {
+            const btn = document.getElementById('btn-create-wallet');
+            btn.innerText = '⏳ Generating...';
+            btn.disabled = true;
+            hideError('choice-error');
+
+            try {
+                const { mnemonic } = await ipcRenderer.invoke('create-wallet');
+                _storedMnemonic = mnemonic;
+                _mnemonicPending = true;
+
+                const grid = document.getElementById('mnemonic-grid');
+                grid.innerHTML = mnemonic.split(' ').map((w, i) =>
+                    `<div class="mnemonic-word"><span class="mnemonic-num">${i + 1}.</span> ${w}</div>`
+                ).join('');
+
+                document.getElementById('wallet-choice').style.display = 'none';
+                document.getElementById('wallet-mnemonic').style.display = 'block';
+            } catch (err) {
+                showError('choice-error', 'Failed to create wallet: ' + (err.message || err));
+                btn.innerText = '✨ Create New Wallet';
+                btn.disabled = false;
+            }
+        }
+
+        function copyMnemonic() {
+            if (!_storedMnemonic) return;
+            navigator.clipboard.writeText(_storedMnemonic).then(() => {
+                const btn = document.querySelector('.mnemonic-copy-btn');
+                btn.innerText = '✅ Copied!';
+                setTimeout(() => { btn.innerText = '📋 Copy All Words'; }, 2000);
+            });
+        }
+
+        function confirmMnemonicBackup() {
+            _storedMnemonic = null;
+            _mnemonicPending = false;
+            document.getElementById('wallet-mnemonic').style.display = 'none';
+
+            if (_walletData) {
+                showWalletConnected(_walletData);
+            } else {
+                document.getElementById('wallet-choice').style.display = 'block';
+                const btn = document.getElementById('btn-create-wallet');
+                btn.innerText = '✨ Create New Wallet';
+                btn.disabled = false;
+            }
+        }
+
+        // ─── Wallet tab: Import ───────────────────────────────────────────────
+        function showImportForm() {
+            document.getElementById('wallet-choice').style.display = 'none';
+            document.getElementById('wallet-import').style.display = 'block';
+        }
+
+        function cancelImport() {
+            document.getElementById('wallet-import').style.display = 'none';
+            document.getElementById('wallet-choice').style.display = 'block';
+            document.getElementById('mnemonic-input').value = '';
+            hideError('import-error');
+        }
+
+        async function disconnectWallet() {
+            if (!confirm('Disconnect wallet? You will need to import it again to reconnect.')) return;
+            await ipcRenderer.invoke('disconnect-wallet');
+            document.getElementById('wallet-connected-view').style.display = 'none';
+            document.getElementById('wallet-choice').style.display = 'block';
+            document.getElementById('wallet-refresh-btn').style.display = 'none';
+        }
+
+        async function doImportWallet() {
+            const mnemonic = document.getElementById('mnemonic-input').value.trim();
+            const btn = document.getElementById('btn-import');
+            hideError('import-error');
+
+            if (!mnemonic) { showError('import-error', 'Please enter your mnemonic phrase.'); return; }
+
+            btn.innerText = '⏳ Importing...';
+            btn.disabled = true;
+
+            try {
+                await ipcRenderer.invoke('import-wallet', mnemonic);
+                document.getElementById('mnemonic-input').value = '';
+                // wallet-connected fires from main → showWalletConnected called there
+            } catch (err) {
+                showError('import-error', err.message || 'Import failed. Check your mnemonic and try again.');
+                btn.innerText = 'Import Wallet';
+                btn.disabled = false;
+            }
+        }
+
+        // ─── Wallet tab: Connected view ───────────────────────────────────────
+        function showWalletConnected(data) {
+            document.getElementById('wallet-choice').style.display = 'none';
+            document.getElementById('wallet-mnemonic').style.display = 'none';
+            document.getElementById('wallet-import').style.display = 'none';
+            document.getElementById('wallet-connected-view').style.display = 'block';
+            document.getElementById('wallet-refresh-btn').style.display = 'flex';
+
+            document.getElementById('wallet-address').innerText = data.address;
+            document.getElementById('wallet-eth').innerText = data.eth;
+            document.getElementById('wallet-dcld').innerText = data.dcld;
+
+            applyRegistrationState(data.isRegistered);
+            loadTransactions(data.address);
+        }
+
+        async function loadTransactions(myAddress) {
+            const body = document.getElementById('tx-table-body');
+            body.innerHTML = '<div style="padding:16px;color:var(--text-light);font-size:13px;">Loading transactions...</div>';
+            try {
+                const txs = await ipcRenderer.invoke('get-transactions');
+                if (!txs || txs.length === 0) {
+                    body.innerHTML = '<div style="padding:16px;color:var(--text-light);font-size:13px;">No DCLD transactions found.</div>';
+                    return;
+                }
+                body.innerHTML = txs.map(tx => {
+                    const incoming = tx.to.toLowerCase() === myAddress.toLowerCase();
+                    const date = tx.timestamp
+                        ? new Date(tx.timestamp * 1000).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+                        : `Block #${tx.blockNumber}`;
+                    const amount = parseFloat(tx.amount).toFixed(4);
+                    const shortHash = tx.txHash ? tx.txHash.slice(0, 8) + '…' + tx.txHash.slice(-6) : '—';
+                    const color = incoming ? 'var(--success)' : '#EF4444';
+                    const sign  = incoming ? '+' : '-';
+                    return `<div class="table-row">
+                        <div>${date}</div>
+                        <div>${incoming ? 'Received' : 'Sent'}</div>
+                        <div style="color:${color};font-weight:600;">${sign}${amount} DCLD</div>
+                        <div style="font-family:monospace;font-size:12px;">${shortHash}</div>
+                    </div>`;
+                }).join('');
+            } catch (e) {
+                body.innerHTML = `<div style="padding:16px;color:#EF4444;font-size:13px;">Failed to load transactions: ${e.message}</div>`;
+            }
+        }
+
+        // ─── Profile tab state ────────────────────────────────────────────────
+        function updateProfileState() {
+            const noWallet = document.getElementById('profile-no-wallet');
+            const authPrompt = document.getElementById('profile-auth-prompt');
+            const identity = document.getElementById('profile-identity');
+
+            if (!_walletData) {
+                noWallet.style.display = 'block';
+                authPrompt.style.display = 'none';
+                identity.style.display = 'none';
+            } else if (!_isAuthenticated) {
+                noWallet.style.display = 'none';
+                authPrompt.style.display = 'block';
+                identity.style.display = 'none';
+            } else {
+                noWallet.style.display = 'none';
+                authPrompt.style.display = 'none';
+                identity.style.display = 'block';
+                document.getElementById('profile-address').innerText = _walletData.address;
+            }
+        }
+
+        // ─── Profile: Login / Register ────────────────────────────────────────
+        async function doPeerLogin() {
+            const btn = document.getElementById('btn-peer-login');
+            hideError('login-error');
+            btn.innerText = '⏳ Logging in...';
+            btn.disabled = true;
+            try {
+                await ipcRenderer.invoke('peer-login');
+                // auth-success event will fire → updateProfileState()
+            } catch (err) {
+                showError('login-error', err.message || 'Login failed. Are you registered?');
+                btn.innerText = '🔑 Login';
+                btn.disabled = false;
+            }
+        }
+
+        async function doPeerRegister() {
+            const btn = document.getElementById('btn-peer-register');
+            const capacityInput = document.getElementById('reg-capacity-auth');
+            const declaredCapacityGB = parseInt(capacityInput.value, 10);
+            hideError('register-error');
+
+            if (!declaredCapacityGB || declaredCapacityGB < 1) {
+                showError('register-error', 'Please enter a valid capacity (minimum 1 GB).');
+                return;
+            }
+
+            btn.innerText = '⏳ Registering...';
+            btn.disabled = true;
+            try {
+                await ipcRenderer.invoke('peer-register', { declaredCapacityGB });
+                // auth-success event will fire → updateProfileState()
+            } catch (err) {
+                showError('register-error', err.message || 'Registration failed. Try again.');
+                btn.innerText = '📝 Register';
+                btn.disabled = false;
+            }
+        }
+
+        async function doPeerLogout() {
+            const btn = document.getElementById('btn-peer-logout');
+            btn.innerText = '⏳ Logging out...';
+            btn.disabled = true;
+            try {
+                await ipcRenderer.invoke('peer-logout');
+            } catch (err) {
+                console.error('Logout error:', err);
+                btn.innerText = '🚪 Logout from DeCloud';
+                btn.disabled = false;
+            }
+        }
+
+        // ─── DCLD Approval ────────────────────────────────────────────────────
+        async function doApproveDcld() {
+            const btn = document.getElementById('btn-approve-dcld');
+            const result = document.getElementById('approve-dcld-result');
+            btn.innerText = '⏳ Approving...';
+            btn.disabled = true;
+            result.className = 'feedback-msg';
+            result.innerText = '';
+            try {
+                const res = await ipcRenderer.invoke('approve-dcld-escrow');
+                result.className = 'feedback-msg feedback-success';
+                result.innerText = `Approval successful! The StorageEscrow contract can now move DCLD on your behalf.\nTx: ${res.txHash}`;
+                btn.innerText = '✅ Already Approved';
+                btn.disabled = true;
+                btn.style.opacity = '0.6';
+            } catch (err) {
+                result.className = 'feedback-msg feedback-error';
+                result.innerText = `❌ ${err.message}`;
+                btn.innerText = '✅ Approve DCLD Spending';
+                btn.disabled = false;
+            }
+        }
+
+        // ─── Balance Refresh ──────────────────────────────────────────────────
+        function refreshBalance() {
+            const btn = document.getElementById('wallet-refresh-btn');
+            btn.innerText = '⏳ Updating...';
+            ipcRenderer.send('refresh-balance');
+        }
+
+        function resetRefreshBtn() {
+            document.getElementById('wallet-refresh-btn').innerText = '🔄 Refresh';
+        }
+
+        // ─── Deals ────────────────────────────────────────────────────────────
+
+        const _recentDeals = []; // { dealId, phase, timestamp }
+        const _countdowns  = {}; // dealId → intervalId
+
+        async function loadDealsTab() {
+            try {
+                const { autoSign } = await ipcRenderer.invoke('get-deal-settings');
+                const cb = document.getElementById('toggle-auto-sign');
+                cb.checked = autoSign;
+                const slider = document.getElementById('toggle-slider');
+                slider.style.background = autoSign ? 'var(--primary)' : '#ccc';
+            } catch (e) { console.error('get-deal-settings failed:', e); }
+
+            try {
+                const pending = await ipcRenderer.invoke('get-pending-deals');
+                renderPendingDeals(pending);
+            } catch (e) { console.error('get-pending-deals failed:', e); }
+
+            renderRecentDeals();
+        }
+
+        async function onAutoSignToggle(value) {
+            const slider = document.getElementById('toggle-slider');
+            slider.style.background = value ? 'var(--primary)' : '#ccc';
+            try {
+                await ipcRenderer.invoke('save-deal-settings', { autoSign: value });
+            } catch (e) { console.error('save-deal-settings failed:', e); }
+        }
+
+        function renderPendingDeals(pendingList) {
+            const container = document.getElementById('deals-pending-list');
+            const header    = document.getElementById('deals-pending-header');
+            container.innerHTML = '';
+            // Clear old countdowns
+            Object.keys(_countdowns).forEach(id => clearInterval(_countdowns[id]));
+
+            if (!pendingList || pendingList.length === 0) {
+                header.style.display = 'none';
+                updateEmptyState();
+                return;
+            }
+            header.style.display = 'block';
+            document.getElementById('deals-empty').style.display = 'none';
+
+            pendingList.forEach(deal => {
+                // Guard against duplicates if the live event already added this card
+                const existing = document.getElementById(`deal-card-${deal.dealId}`);
+                if (!existing) container.appendChild(buildPendingCard(deal));
+                startCountdown(deal.dealId, deal.expiresAt);
+            });
+        }
+
+        function buildPendingCard(deal) {
+            const d = deal.dealData || {};
+            const sizeBytes   = parseInt(d.sizeBytes || '0', 10);
+            const sizeLabel   = formatBytes(sizeBytes);
+            const durationBlocks = parseInt(d.durationBlocks || '0', 10);
+            const durationDays = Math.round(durationBlocks * 12 / 86400);
+            const priceWei    = BigInt(d.priceWei || '0');
+            const escrowWei   = BigInt(d.peerEscrowWei || '0');
+            const priceDcld   = Number(priceWei) / 1e18;
+            const escrowDcld  = Number(escrowWei) / 1e18;
+            const shortId     = deal.dealId ? deal.dealId.slice(2, 10) : '???';
+
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.id = `deal-card-${deal.dealId}`;
+            card.style.marginBottom = '12px';
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <span style="font-weight:700; font-size:14px;">Deal 0x${shortId}…</span>
+                    <span id="countdown-${deal.dealId}" style="font-size:12px; color: #F59E0B; font-weight:600;"></span>
+                </div>
+                <div style="font-size:12px; color:var(--text-light); margin-bottom:4px;">
+                    Size: ${sizeLabel} &nbsp;·&nbsp; Duration: ~${durationDays} days
+                </div>
+                <div style="font-size:12px; margin-bottom:2px;">
+                    Price: <strong>${priceDcld.toFixed(6)} DCLD</strong>
+                </div>
+                <div style="font-size:12px; color:#60A5FA; margin-bottom:12px;">
+                    Your escrow: ${escrowDcld.toFixed(6)} DCLD
+                </div>
+                <div style="display:flex; gap:8px;">
+                    <button class="btn-secondary" style="flex:1; border-color:#EF4444; color:#EF4444;"
+                        onclick="doRejectDeal('${deal.dealId}')">Reject</button>
+                    <button class="btn-primary" style="flex:1;"
+                        onclick="doApproveDeal('${deal.dealId}')">Approve</button>
+                </div>
+            `;
+            return card;
+        }
+
+        function startCountdown(dealId, expiresAt) {
+            function tick() {
+                const el = document.getElementById(`countdown-${dealId}`);
+                if (!el) { clearInterval(_countdowns[dealId]); return; }
+                const secsLeft = Math.max(0, Math.round((expiresAt - Date.now()) / 1000));
+                const m = Math.floor(secsLeft / 60);
+                const s = secsLeft % 60;
+                el.textContent = `⏱ ${m}:${String(s).padStart(2, '0')} left`;
+                if (secsLeft === 0) clearInterval(_countdowns[dealId]);
+            }
+            tick();
+            _countdowns[dealId] = setInterval(tick, 1000);
+        }
+
+        async function doApproveDeal(dealId) {
+            const card = document.getElementById(`deal-card-${dealId}`);
+            if (card) card.style.opacity = '0.5';
+            try {
+                await ipcRenderer.invoke('approve-deal', dealId);
+                addRecentDeal(dealId, 'signed');
+                if (card) card.remove();
+                updateEmptyState();
+            } catch (e) {
+                if (card) card.style.opacity = '1';
+                alert(`Approve failed: ${e.message}`);
+            }
+        }
+
+        async function doRejectDeal(dealId) {
+            await ipcRenderer.invoke('reject-deal', dealId);
+            const card = document.getElementById(`deal-card-${dealId}`);
+            if (card) card.remove();
+            addRecentDeal(dealId, 'rejected');
+            updateEmptyState();
+        }
+
+        function addRecentDeal(dealId, phase) {
+            _recentDeals.unshift({ dealId, phase, timestamp: Date.now() });
+            if (_recentDeals.length > 20) _recentDeals.pop();
+            renderRecentDeals();
+        }
+
+        function renderRecentDeals() {
+            const container = document.getElementById('deals-recent-list');
+            const header    = document.getElementById('deals-recent-header');
+            if (_recentDeals.length === 0) { header.style.display = 'none'; container.innerHTML = ''; return; }
+            header.style.display = 'block';
+            container.innerHTML = _recentDeals.map(d => {
+                const shortId = d.dealId ? d.dealId.slice(2, 10) : '???';
+                const icon    = d.phase === 'signed' ? '✅' : d.phase === 'rejected' ? '❌' : '⏰';
+                const label   = d.phase === 'signed' ? 'Approved' : d.phase === 'rejected' ? 'Rejected' : 'Expired';
+                const diffMs   = Date.now() - d.timestamp;
+                const agoMins  = Math.round(diffMs / 60000);
+                const agoLabel = agoMins < 1   ? 'just now'
+                               : agoMins < 60  ? `${agoMins}m ago`
+                               : agoMins < 1440 ? `${Math.round(agoMins / 60)}h ago`
+                               : `${Math.round(agoMins / 1440)}d ago`;
+                return `<div style="display:flex; justify-content:space-between; align-items:center;
+                    padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size:13px;">
+                    <span>${icon} Deal 0x${shortId}… <span style="color:var(--text-light)">${label}</span></span>
+                    <span style="font-size:11px; color:var(--text-light);">${agoLabel}</span>
+                </div>`;
+            }).join('');
+            updateEmptyState();
+        }
+
+        function updateEmptyState() {
+            const hasPending = document.getElementById('deals-pending-list').children.length > 0;
+            const hasRecent  = _recentDeals.length > 0;
+            document.getElementById('deals-empty').style.display =
+                (hasPending || hasRecent) ? 'none' : 'block';
+        }
+
+        function formatBytes(bytes) {
+            if (bytes < 1024) return `${bytes} B`;
+            if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+            if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+            return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+        }
+
+        // Listen for real-time deal events from main process
+        ipcRenderer.on('peer:deal', (_event, data) => {
+            if (data.phase === 'pending_approval') {
+                const container = document.getElementById('deals-pending-list');
+                const header    = document.getElementById('deals-pending-header');
+                if (container) {
+                    // Remove existing card for this deal (handles re-sent signing requests)
+                    const existing = document.getElementById(`deal-card-${data.dealId}`);
+                    if (existing) existing.remove();
+                    header.style.display = 'block';
+                    document.getElementById('deals-empty').style.display = 'none';
+                    const card = buildPendingCard({ dealId: data.dealId, dealData: data.dealData, expiresAt: data.expiresAt });
+                    container.appendChild(card);
+                    startCountdown(data.dealId, data.expiresAt);
+                }
+            } else if (data.phase === 'signed') {
+                // Always add to recent — card may not exist when auto-sign is on
+                const card = document.getElementById(`deal-card-${data.dealId}`);
+                if (card) card.remove();
+                addRecentDeal(data.dealId, 'signed');
+            } else if (data.phase === 'expired' || data.phase === 'rejected') {
+                const card = document.getElementById(`deal-card-${data.dealId}`);
+                if (card) card.remove();
+                addRecentDeal(data.dealId, data.phase);
+            } else if (data.phase === 'proof_challenged') {
+                const logs = document.getElementById('console-logs');
+                const entry = document.createElement('div');
+                entry.className = 'log-entry';
+                const d = `<span style="color:#60A5FA;font-family:monospace">${String(data.dealId).slice(0, 10)}…</span>`;
+                entry.innerHTML = `<span class="log-time">${new Date().toLocaleTimeString()}</span> 🔍 Proof challenge #${data.interval} — deal: ${d}`;
+                logs.prepend(entry);
+            } else if (data.phase === 'proof_sent') {
+                const logs = document.getElementById('console-logs');
+                const entry = document.createElement('div');
+                entry.className = 'log-entry';
+                const d = `<span style="color:#60A5FA;font-family:monospace">${String(data.dealId).slice(0, 10)}…</span>`;
+                entry.innerHTML = `<span class="log-time">${new Date().toLocaleTimeString()}</span> ✅ Proof response #${data.interval} sent — deal: ${d}`;
+                logs.prepend(entry);
+            } else if (data.phase === 'slashed_by_client') {
+                const logs = document.getElementById('console-logs');
+                const entry = document.createElement('div');
+                entry.className = 'log-entry';
+                const d = `<span style="color:#F87171;font-family:monospace">${String(data.dealId).slice(0, 10)}…</span>`;
+                entry.innerHTML = `<span class="log-time">${new Date().toLocaleTimeString()}</span> ⚠️ Deal slashed — client deleted file. Escrow forfeited: ${d}`;
+                logs.prepend(entry);
+            } else if (data.phase === 'reward_issued') {
+                const logs = document.getElementById('console-logs');
+                const entry = document.createElement('div');
+                entry.className = 'log-entry';
+                const d = `<span style="color:#60A5FA;font-family:monospace">${String(data.dealId).slice(0, 10)}…</span>`;
+                const rewardDcld = data.rewardWei ? (Number(BigInt(data.rewardWei)) / 1e18).toFixed(6) : '';
+                const rewardStr = rewardDcld ? ` <span style="color:#10B981;font-weight:600;">+${rewardDcld} DCLD</span>` : '';
+                entry.innerHTML = `<span class="log-time">${new Date().toLocaleTimeString()}</span> 💰 Reward released — interval #${data.interval}${rewardStr} — deal: ${d}`;
+                logs.prepend(entry);
+
+                if (data.rewardWei) {
+                    _totalEarnings += Number(BigInt(data.rewardWei)) / 1e18;
+                    document.getElementById('dashboard-earnings').innerText = _totalEarnings.toFixed(4);
+                }
+
+                // Refresh on-chain balance and transaction history
+                ipcRenderer.send('refresh-balance');
+                if (_walletData?.address) loadTransactions(_walletData.address);
+            }
+        });
+
+        ipcRenderer.on('peer:deleted', (_event, data) => {
+            const logs = document.getElementById('console-logs');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            const fid = `<span style="color:#F87171;font-family:monospace">${String(data.fileId).slice(0, 10)}…</span>`;
+            entry.innerHTML = `<span class="log-time">${new Date().toLocaleTimeString()}</span> 🗑️ Client deleted file — chunks removed: ${fid}`;
+            logs.prepend(entry);
+        });
+
+        // ─── Files (peer stored files + proof progress) ───────────────────────
+
+        // Mirror of the Solidity _intervalReward formula
+        function _intervalRewardWei(totalRewardWei, interval) {
+            const price = BigInt(totalRewardWei);
+            if (interval === 1) return price - (price * 1023n / 1024n);
+            return price >> BigInt(11 - interval);
+        }
+
+        function _earnedSoFar(totalRewardWei, intervalsDone) {
+            let total = 0n;
+            for (let i = 1; i <= intervalsDone; i++) total += _intervalRewardWei(totalRewardWei, i);
+            return total;
+        }
+
+        function _fmtDcld(wei) {
+            const dcld = Number(BigInt(wei)) / 1e18;
+            return dcld.toFixed(6) + ' DCLD';
+        }
+
+        function _fmtSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + ' MB';
+            return (bytes / 1073741824).toFixed(2) + ' GB';
+        }
+
+        function _fmtExpiry(endDateStr) {
+            try {
+                const end = new Date(endDateStr);
+                const diff = end - Date.now();
+                if (diff < 0) return 'Expired';
+                const d = Math.floor(diff / 86400000);
+                const h = Math.floor((diff % 86400000) / 3600000);
+                const m = Math.floor((diff % 3600000) / 60000);
+                if (d >= 1) return `${d}d ${h}h`;
+                if (h >= 1) return `${h}h ${m}m`;
+                return `${m}m`;
+            } catch { return ''; }
+        }
+
+        async function loadPeerFiles() {
+            const list    = document.getElementById('files-list');
+            const loading = document.getElementById('files-loading');
+            const errEl   = document.getElementById('files-error');
+            const emptyEl = document.getElementById('files-empty');
+
+            list.innerHTML = '';
+            errEl.style.display = 'none';
+            emptyEl.style.display = 'none';
+            loading.style.display = 'block';
+
+            try {
+                const files = await ipcRenderer.invoke('get-peer-files');
+                loading.style.display = 'none';
+
+                if (!files || files.length === 0) {
+                    emptyEl.style.display = 'block';
+                    return;
+                }
+
+                list.innerHTML = files.map(f => _buildFileCard(f)).join('');
+            } catch (e) {
+                loading.style.display = 'none';
+                errEl.style.display = 'block';
+                errEl.innerText = 'Failed to load files: ' + (e.message || e);
+            }
+        }
+
+        function _buildFileCard(f) {
+            const total     = BigInt(f.totalReward || '0');
+            const done      = f.intervalsDone || 0;
+            const count     = f.intervalCount || 10;
+            const earned    = _earnedSoFar(f.totalReward || '0', done);
+            const remaining = total - earned;
+
+            const contractColor = {
+                ACTIVE:    '#10B981',
+                COMPLETED: '#6C63FF',
+                SLASHED:   '#EF4444',
+            }[f.contractStatus] || '#64748B';
+
+            const contractBg = {
+                ACTIVE:    'rgba(16,185,129,0.12)',
+                COMPLETED: 'rgba(108,99,255,0.12)',
+                SLASHED:   'rgba(239,68,68,0.12)',
+            }[f.contractStatus] || 'rgba(100,116,139,0.12)';
+
+            // Interval progress blocks
+            const blocks = Array.from({ length: count }, (_, i) => {
+                const released = i < done;
+                const rewardWei = _intervalRewardWei(f.totalReward || '0', i + 1);
+                const dcld = (Number(rewardWei) / 1e18).toFixed(6);
+                const bg = released ? contractColor : '#E2E8F0';
+                return `<div title="Interval ${i+1}: ${dcld} DCLD${released ? ' ✓ Released' : ' ⏳ Pending'}"
+                    style="flex:1;height:12px;border-radius:3px;background:${bg};
+                           margin:0 1px;transition:background 0.2s;cursor:default;"></div>`;
+            }).join('');
+
+            // Per-interval detail rows
+            const intervalRows = Array.from({ length: count }, (_, i) => {
+                const idx = i + 1;
+                const released = idx <= done;
+                const rewardWei = _intervalRewardWei(f.totalReward || '0', idx);
+                const dcld = (Number(rewardWei) / 1e18).toFixed(6);
+                const icon = released
+                    ? '<span style="color:#10B981;font-size:13px;">✓</span>'
+                    : '<span style="color:#94A3B8;font-size:13px;">○</span>';
+                return `<div style="display:flex;align-items:center;justify-content:space-between;
+                            padding:5px 0;border-bottom:1px solid #F1F5F9;">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        ${icon}
+                        <span style="font-size:12px;color:${released ? '#1E293B' : '#94A3B8'};">
+                            Interval #${idx}
+                        </span>
+                    </div>
+                    <span style="font-size:12px;font-weight:600;color:${released ? '#10B981' : '#94A3B8'};">
+                        +${dcld} DCLD
+                    </span>
+                </div>`;
+            }).join('');
+
+            const shortDeal = f.dealId
+                ? f.dealId.slice(0, 10) + '…' + f.dealId.slice(-6)
+                : '—';
+            const shortTx = f.dealTxHash
+                ? f.dealTxHash.slice(0, 10) + '…' + f.dealTxHash.slice(-6)
+                : '—';
+
+            const cardId = 'fc-' + (f.fileId || Math.random()).toString().replace(/-/g, '');
+
+            return `
+            <div class="card" style="margin-bottom:16px;">
+                <!-- Header row -->
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;">
+                    <div style="display:flex;align-items:center;gap:12px;min-width:0;">
+                        <div style="width:40px;height:40px;border-radius:10px;background:#EEF2FF;
+                                    display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <span style="font-size:20px;">📄</span>
+                        </div>
+                        <div style="min-width:0;">
+                            <div style="font-weight:600;font-size:14px;color:#1E293B;
+                                        overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px;"
+                                 title="${f.filename || ''}">${f.filename || 'Unknown'}</div>
+                            <div style="font-size:12px;color:#64748B;margin-top:2px;">
+                                ${_fmtSize(f.fileSize || 0)}
+                                &nbsp;·&nbsp;Expires ${_fmtExpiry(f.endDate)}
+                            </div>
+                        </div>
+                    </div>
+                    <span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;
+                                 flex-shrink:0;margin-left:8px;
+                                 color:${contractColor};background:${contractBg};">
+                        ${f.contractStatus || '—'}
+                    </span>
+                </div>
+
+                <!-- Proof progress -->
+                <div style="margin-bottom:10px;">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                        <span style="font-size:12px;font-weight:600;color:#64748B;text-transform:uppercase;letter-spacing:0.04em;">
+                            Proof Intervals
+                        </span>
+                        <span style="font-size:12px;color:#1E293B;font-weight:600;">
+                            ${done} / ${count} verified
+                        </span>
+                    </div>
+                    <div style="display:flex;align-items:center;">
+                        ${blocks}
+                    </div>
+                </div>
+
+                <!-- Reward summary -->
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;
+                            background:#F8FAFC;border-radius:10px;padding:10px 12px;margin-bottom:12px;">
+                    <div>
+                        <div style="font-size:11px;color:#64748B;font-weight:600;text-transform:uppercase;
+                                    letter-spacing:0.04em;margin-bottom:2px;">Earned</div>
+                        <div style="font-size:13px;font-weight:700;color:#10B981;">${_fmtDcld(earned.toString())}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;color:#64748B;font-weight:600;text-transform:uppercase;
+                                    letter-spacing:0.04em;margin-bottom:2px;">Remaining</div>
+                        <div style="font-size:13px;font-weight:700;color:#6C63FF;">${_fmtDcld(remaining.toString())}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;color:#64748B;font-weight:600;text-transform:uppercase;
+                                    letter-spacing:0.04em;margin-bottom:2px;">Total</div>
+                        <div style="font-size:13px;font-weight:700;color:#1E293B;">${_fmtDcld(total.toString())}</div>
+                    </div>
+                </div>
+
+                <!-- Collapsible interval breakdown -->
+                <div style="margin-bottom:12px;">
+                    <button onclick="toggleIntervals('${cardId}')"
+                        style="background:none;border:none;cursor:pointer;font-size:12px;
+                               color:#6C63FF;font-weight:600;padding:0;display:flex;align-items:center;gap:4px;">
+                        <span id="${cardId}-arrow">▶</span> Interval breakdown
+                    </button>
+                    <div id="${cardId}-intervals" style="display:none;margin-top:8px;
+                        border:1px solid #E2E8F0;border-radius:8px;padding:4px 12px;max-height:220px;overflow-y:auto;">
+                        ${intervalRows}
+                    </div>
+                </div>
+
+                <!-- Deal info footer -->
+                <div style="display:flex;gap:16px;padding-top:10px;border-top:1px solid #F1F5F9;">
+                    <div style="font-size:11px;color:#64748B;">
+                        <span style="font-weight:600;">Deal:</span>
+                        <span style="font-family:monospace;">${shortDeal}</span>
+                    </div>
+                    <div style="font-size:11px;color:#64748B;">
+                        <span style="font-weight:600;">Tx:</span>
+                        <span style="font-family:monospace;">${shortTx}</span>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function toggleIntervals(cardId) {
+            const el    = document.getElementById(cardId + '-intervals');
+            const arrow = document.getElementById(cardId + '-arrow');
+            const open  = el.style.display === 'none';
+            el.style.display    = open ? 'block' : 'none';
+            arrow.textContent   = open ? '▼' : '▶';
+        }
+
+        // ─── Settings ─────────────────────────────────────────────────────────
+        async function loadSettings() {
+            try {
+                const { apiBaseUrl, relayBaseUrl, rpcUrl, storageCapacityGB } = await ipcRenderer.invoke('get-settings');
+                document.getElementById('api-base-url').value = apiBaseUrl || '';
+                document.getElementById('relay-base-url').value = relayBaseUrl || '';
+                document.getElementById('rpc-url').value = rpcUrl || '';
+                document.getElementById('storage-capacity-gb').value = storageCapacityGB > 0 ? storageCapacityGB : '';
+            } catch (err) {
+                console.error('Failed to load settings:', err);
+            }
+        }
+
+        async function saveNetworkSettings() {
+            const apiBaseUrl   = document.getElementById('api-base-url').value;
+            const relayBaseUrl = document.getElementById('relay-base-url').value;
+            const rpcUrl       = document.getElementById('rpc-url').value.trim();
+            const feedback     = document.getElementById('api-url-feedback');
+
+            if (!apiBaseUrl) {
+                feedback.className = 'feedback-msg feedback-error';
+                feedback.innerText = 'API Base URL is required.';
+                feedback.style.display = 'block';
+                return;
+            }
+
+            try {
+                await ipcRenderer.invoke('save-settings', { apiBaseUrl, relayBaseUrl, rpcUrl });
+                feedback.className = 'feedback-msg feedback-success';
+                feedback.innerText = '✅ Saved!';
+                feedback.style.display = 'block';
+                setTimeout(() => { feedback.style.display = 'none'; }, 2500);
+            } catch (err) {
+                feedback.className = 'feedback-msg feedback-error';
+                feedback.innerText = 'Failed to save: ' + (err.message || err);
+                feedback.style.display = 'block';
+            }
+        }
+
+        async function fetchNetworkConfig() {
+            const feedback = document.getElementById('api-url-feedback');
+            feedback.className = 'feedback-msg';
+            feedback.innerText = '⏳ Fetching…';
+            feedback.style.display = 'block';
+            try {
+                const { dcldTokenAddress, escrowAddress } = await ipcRenderer.invoke('fetch-network-config');
+                feedback.className = 'feedback-msg feedback-success';
+                feedback.innerText = `✅ DCLD: ${dcldTokenAddress.slice(0,10)}…  Escrow: ${escrowAddress.slice(0,10)}…`;
+                feedback.style.display = 'block';
+                setTimeout(() => { feedback.style.display = 'none'; }, 4000);
+            } catch (err) {
+                feedback.className = 'feedback-msg feedback-error';
+                feedback.innerText = 'Failed: ' + (err.message || err);
+                feedback.style.display = 'block';
+            }
+        }
+
+        async function saveStorageCapacity() {
+            const gb = parseFloat(document.getElementById('storage-capacity-gb').value);
+            const feedback = document.getElementById('storage-capacity-feedback');
+            if (!gb || gb < 1) {
+                feedback.className = 'feedback-msg feedback-error';
+                feedback.innerText = 'Enter a valid capacity (minimum 1 GB).';
+                feedback.style.display = 'block';
+                return;
+            }
+            try {
+                await ipcRenderer.invoke('save-settings', { storageCapacityGB: gb });
+                feedback.className = 'feedback-msg feedback-success';
+                feedback.innerText = `✅ Saved! (${Math.round(gb * 1073741824).toLocaleString()} bytes)`;
+                feedback.style.display = 'block';
+                setTimeout(() => { feedback.style.display = 'none'; }, 3000);
+            } catch (err) {
+                feedback.className = 'feedback-msg feedback-error';
+                feedback.innerText = 'Failed to save: ' + (err.message || err);
+                feedback.style.display = 'block';
+            }
+        }
+
+        // ─── Node Registration ────────────────────────────────────────────────
+        function applyRegistrationState(isRegistered) {
+            const btnReg = document.getElementById('btn-register');
+            const btnDereg = document.getElementById('btn-deregister');
+            const status = document.getElementById('reg-status');
+
+            if (isRegistered) {
+                btnReg.innerText = '🔄 Update IP on Blockchain';
+                btnReg.style.background = '#3B82F6';
+                btnReg.disabled = false;
+                btnReg.onclick = updateIpOnChain;
+                btnDereg.style.display = 'block';
+                btnDereg.disabled = false;
+                status.style.display = 'block';
+                status.style.color = '#3B82F6';
+                status.innerText = 'Node is registered. You can update your IP above.';
+            } else {
+                btnReg.innerText = '📡 Register Node on Blockchain';
+                btnReg.style.background = 'var(--primary)';
+                btnReg.disabled = false;
+                btnReg.onclick = registerNode;
+                btnDereg.style.display = 'none';
+                status.style.display = 'none';
+            }
+        }
+
+        function registerNode() {
+            const capacity = document.getElementById('reg-capacity').value;
+            const endpoint = document.getElementById('reg-endpoint').value;
+            const btn = document.getElementById('btn-register');
+            const status = document.getElementById('reg-status');
+
+            if (!capacity || !endpoint) { alert('Please fill in all fields.'); return; }
+
+            btn.innerText = '⏳ Registering...';
+            btn.disabled = true;
+            status.style.display = 'block';
+            status.style.color = 'orange';
+            status.innerText = 'Sending transaction to blockchain...';
+
+            ipcRenderer.send('register-node', { capacity, endpoint });
+        }
+
+        function updateIpOnChain() {
+            const endpoint = document.getElementById('reg-endpoint').value;
+            if (!endpoint) { alert('Please enter a new endpoint URL.'); return; }
+
+            const btn = document.getElementById('btn-register');
+            const status = document.getElementById('reg-status');
+
+            btn.innerText = '⏳ Updating IP...';
+            btn.disabled = true;
+            status.style.display = 'block';
+            status.style.color = 'orange';
+            status.innerText = 'Sending update transaction to blockchain...';
+
+            ipcRenderer.send('update-ip', { endpoint });
+        }
+
+        function deregisterNode() {
+            if (confirm('Are you sure you want to deregister? Your node will go offline and your 500 DCLD stake will be returned to your wallet.')) {
+                const btn = document.getElementById('btn-deregister');
+                btn.innerText = '⏳ Deregistering...';
+                btn.disabled = true;
+                ipcRenderer.send('deregister-node');
+            }
+        }
+
+        // ─── UI Helpers ───────────────────────────────────────────────────────
+        function showError(id, msg) {
+            const el = document.getElementById(id);
+            el.innerText = msg;
+            el.style.display = 'block';
+        }
+
+        function hideError(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // ─── IPC Listeners ────────────────────────────────────────────────────
+
+        ipcRenderer.on('wallet-connected', (event, data) => {
+            _walletData = data;
+            updateProfileState();
+            resetRefreshBtn();
+
+            if (_mnemonicPending) return; // keep backup screen visible
+            showWalletConnected(data);
+        });
+
+        ipcRenderer.on('balance-refresh-failed', (event, { reason }) => {
+            resetRefreshBtn();
+            const btn = document.getElementById('wallet-refresh-btn');
+            btn.title = `Failed to refresh: ${reason}`;
+            // show inline error under balances
+            const existing = document.getElementById('balance-refresh-error');
+            const el = existing ?? document.createElement('div');
+            el.id = 'balance-refresh-error';
+            el.style.cssText = 'color:#EF4444;font-size:12px;margin-top:6px;';
+            el.innerText = `Failed to refresh balances: ${reason}`;
+            if (!existing) {
+                const ethRow = document.getElementById('wallet-eth')?.closest('.card-row') ?? document.getElementById('wallet-eth')?.parentElement;
+                ethRow?.parentElement?.appendChild(el);
+            }
+            setTimeout(() => el.remove(), 6000);
+        });
+
+        async function loadPeerDashboard() {
+            try {
+                const data = await ipcRenderer.invoke('get-peer-dashboard');
+                if (data.totalEarnedWei && BigInt(data.totalEarnedWei) > 0n) {
+                    _totalEarnings = Number(BigInt(data.totalEarnedWei)) / 1e18;
+                    document.getElementById('dashboard-earnings').innerText = _totalEarnings.toFixed(4);
+                }
+                if (Array.isArray(data.recentDeals) && data.recentDeals.length > 0) {
+                    // Seed persisted deals; live events during this session will prepend on top
+                    _recentDeals.length = 0;
+                    data.recentDeals.forEach(d => _recentDeals.push(d));
+                    renderRecentDeals();
+                }
+            } catch (e) {
+                console.error('loadPeerDashboard failed:', e.message);
+            }
+        }
+
+        ipcRenderer.on('auth-success', () => {
+            _isAuthenticated = true;
+            updateProfileState();
+            // Reload transactions now that auth is done — get-transactions will fetch
+            // live network config so the correct DCLD address and RPC are used.
+            if (_walletData?.address) loadTransactions(_walletData.address);
+            loadPeerDashboard();
+        });
+
+        ipcRenderer.on('auth-failed', () => {
+            _isAuthenticated = false;
+            updateProfileState();
+            const logoutBtn = document.getElementById('btn-peer-logout');
+            if (logoutBtn) {
+                logoutBtn.innerText = '🚪 Logout from DeCloud';
+                logoutBtn.disabled = false;
+            }
+        });
+
+        ipcRenderer.on('registration-success', (event, txHash) => {
+            const btnReg = document.getElementById('btn-register');
+            const btnDereg = document.getElementById('btn-deregister');
+            const status = document.getElementById('reg-status');
+
+            btnReg.innerText = '🔄 Update IP on Blockchain';
+            btnReg.style.background = '#3B82F6';
+            btnReg.disabled = false;
+            btnReg.onclick = updateIpOnChain;
+            btnDereg.style.display = 'block';
+            btnDereg.disabled = false;
+            status.style.display = 'block';
+            status.style.color = '#3B82F6';
+            status.innerHTML = `✅ Registered! Tx: <span style="font-family:monospace">${txHash.substring(0, 10)}...</span>`;
+        });
+
+        ipcRenderer.on('registration-error', (event, errorMsg) => {
+            const btn = document.getElementById('btn-register');
+            const status = document.getElementById('reg-status');
+            btn.innerText = '📡 Register Node on Blockchain';
+            btn.disabled = false;
+            status.style.color = 'red';
+            status.innerText = 'Error: ' + errorMsg;
+        });
+
+        ipcRenderer.on('update-success', (event, txHash) => {
+            const btn = document.getElementById('btn-register');
+            const status = document.getElementById('reg-status');
+            btn.innerText = '🔄 Update IP on Blockchain';
+            btn.disabled = false;
+            status.style.color = 'green';
+            status.innerHTML = `✅ IP Updated! Tx: <span style="font-family:monospace">${txHash.substring(0, 10)}...</span>`;
+        });
+
+        ipcRenderer.on('deregister-success', () => {
+            alert('✅ Node deregistered. Your 500 DCLD stake has been returned.');
+            refreshBalance();
+        });
+
+        async function doReconnect() {
+            const btn = document.getElementById('reconnect-btn');
+            if (btn) { btn.disabled = true; btn.innerText = '↺ Connecting…'; }
+            try {
+                await ipcRenderer.invoke('ws-reconnect');
+            } catch (e) {
+                console.error('Reconnect failed:', e);
+            } finally {
+                setTimeout(() => {
+                    if (btn) { btn.disabled = false; btn.innerText = '↺ Reconnect'; }
+                }, 3000);
+            }
+        }
+
+        ipcRenderer.on('ws-status', (event, data) => {
+            const badge = document.getElementById('ws-badge');
+            const dot   = document.getElementById('ws-dot');
+            const text  = document.getElementById('ws-text');
+
+            const styles = {
+                connecting:   { bg: '#FEF3C7', border: '#FCD34D', color: '#92400E', dot: '#F59E0B', label: 'WS: Connecting…' },
+                connected:    { bg: '#ECFDF5', border: '#D1FAE5', color: '#065F46', dot: '#10B981', label: 'WS: Connected' },
+                disconnected: { bg: '#F8FAFC', border: '#E2E8F0', color: '#64748B', dot: '#94A3B8', label: 'WS: Offline' },
+                'auth-failed':{ bg: '#FEF2F2', border: '#FECACA', color: '#B91C1C', dot: '#EF4444', label: 'WS: Auth Failed' },
+            };
+
+            const s = styles[data.status] ?? styles['disconnected'];
+            badge.style.background   = s.bg;
+            badge.style.borderColor  = s.border;
+            badge.style.color        = s.color;
+            dot.style.background     = s.dot;
+            dot.style.boxShadow      = data.status === 'connected' ? `0 0 0 2px ${s.border}` : 'none';
+            text.innerText           = s.label;
+        });
+
+        // ─── Chunk / Storage events ───────────────────────────────────────────
+
+        ipcRenderer.on('peer:storage', (event, data) => {
+            const { usedBytes, chunkCount } = data;
+
+            const el = document.getElementById('dashboard-files');
+            if (el) el.innerText = chunkCount;
+
+            const storEl = document.getElementById('dashboard-storage');
+            if (storEl) storEl.innerText = formatBytes(usedBytes);
+        });
+
+        ipcRenderer.on('peer:assignment', (event, data) => {
+            const { fileId, chunkIndexes } = data;
+            const logs = document.getElementById('console-logs');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<span class="log-time">${new Date().toLocaleTimeString()}</span> 📦 Chunk assignment — fileId: <span style="color:#60A5FA;font-family:monospace">${fileId.slice(0, 8)}…</span> chunks: [${chunkIndexes}]`;
+            logs.prepend(entry);
+        });
+
+        ipcRenderer.on('peer:download', (event, data) => {
+            const { phase, fileId, chunkIndex, error } = data;
+            const logs = document.getElementById('console-logs');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            const fid = `<span style="color:#60A5FA;font-family:monospace">${fileId.slice(0, 8)}…</span>`;
+            const messages = {
+                requested:  `📤 Download request — fileId: ${fid}  chunk: ${chunkIndex}`,
+                streaming:  `🔗 Streaming chunk ${chunkIndex} → client  fileId: ${fid}`,
+                complete:   `✅ Chunk ${chunkIndex} served  fileId: ${fid}`,
+                failed:     `❌ Download failed — chunk: ${chunkIndex}  fileId: ${fid}  ${error ?? ''}`,
+            };
+            entry.innerHTML = `<span class="log-time">${new Date().toLocaleTimeString()}</span> ${messages[phase] ?? phase}`;
+            logs.prepend(entry);
+        });
+
+        function formatBytes(bytes) {
+            if (bytes < 1024)           return bytes + ' B';
+            if (bytes < 1024 * 1024)    return (bytes / 1024).toFixed(1) + ' KB';
+            if (bytes < 1024 ** 3)      return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+            return (bytes / 1024 ** 3).toFixed(2) + ' GB';
+        }
+
+        ipcRenderer.on('server-status', (event, data) => {
+            const statusText = document.getElementById('status-text');
+            const statusDot = document.getElementById('status-dot');
+            const logs = document.getElementById('console-logs');
+
+            statusText.innerText = data.status;
+            let colorHex = '#10B981';
+            if (data.color === 'red') colorHex = '#EF4444';
+            if (data.color === 'orange') colorHex = '#F59E0B';
+
+            statusDot.style.background = colorHex;
+            statusDot.style.boxShadow = `0 0 0 2px ${colorHex}33`;
+            statusText.style.color = colorHex;
+
+            if (data.status.includes('Stored') || data.status.includes('Processing')) {
+                const now = new Date().toLocaleTimeString();
+                const newLog = document.createElement('div');
+                newLog.className = 'log-entry';
+                let message = data.status;
+                if (data.cid) message += ` <span style="color:#60A5FA">[CID: ${data.cid.substring(0, 10)}...]</span>`;
+                newLog.innerHTML = `<span class="log-time">${now}</span> ${message}`;
+                logs.prepend(newLog);
+            }
+        });
+    </script>
+</body>
+
+</html>
