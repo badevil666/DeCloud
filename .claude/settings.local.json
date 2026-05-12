@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"require\\('dotenv'\\).config\\(\\); const n = require\\('./config/network'\\); console.log\\('Network:', n.name\\); console.log\\('RPC:', n.rpcUrl\\); console.log\\('Token:', n.dcldTokenAddress\\); console.log\\('Escrow:', n.escrowAddress\\);\")"
+    ]
+  }
+}
