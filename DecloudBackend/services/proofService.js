@@ -88,8 +88,8 @@ async function verifyProofResponse(peerId, dealId, interval, hash) {
   pending.resolve({ peerId, hash });
 }
 
-// Cache: dealId → start block Unix timestamp (ms). Populated on first encounter.
-const _dealStartMs = new Map();
+// Cache: fileId → start Unix timestamp (ms). Shared across all peers of a file.
+const _fileStartMs = new Map();
 
 // ─── Internal: scheduler tick ─────────────────────────────────────────────────
 
@@ -132,39 +132,44 @@ async function runSchedulerTick() {
     []
   );
 
+  // Group by fileId so all peers of a file advance together.
+  // nextInterval for a file = min(intervals_done) + 1 across all its peers.
+  // This ensures the Android UI shows "interval N done for ALL peers" before N+1 starts.
+  const byFile = new Map();
   for (const row of rows) {
-    const intervalsDone = row.intervalsDone ?? 0;
-    const nextInterval  = intervalsDone + 1;
+    if (!byFile.has(row.fileId)) byFile.set(row.fileId, []);
+    byFile.get(row.fileId).push(row);
+  }
 
-    // ── Anvil: pure wall-clock scheduling ────────────────────────────────────
-    // Block counts are unreliable on Anvil — every tx auto-mines a block,
-    // making the counter race ahead unpredictably.
-    // Instead: record the real Unix time when the deal first appears, then
-    // spread 10 intervals evenly across the file's actual end_date.
+  for (const [fileId, peers] of byFile) {
+    const minDone      = Math.min(...peers.map(r => r.intervalsDone ?? 0));
+    const nextInterval = minDone + 1;
+    const sample       = peers[0]; // all peers share the same start/end block and end_date
+
+    // ── Timing check (shared for the whole file) ──────────────────────────────
     if (isAnvil) {
-      if (!_dealStartMs.has(row.dealId)) {
-        _dealStartMs.set(row.dealId, Date.now());
-      }
-      const startMs       = _dealStartMs.get(row.dealId);
-      const endMs         = new Date(row.endDate).getTime();
+      if (!_fileStartMs.has(fileId)) _fileStartMs.set(fileId, Date.now());
+      const startMs         = _fileStartMs.get(fileId);
+      const endMs           = new Date(sample.endDate).getTime();
       const totalDurationMs = Math.max(endMs - startMs, 1);
-      const intervalDueMs = startMs + (nextInterval / row.intervalCount) * totalDurationMs;
+      const intervalDueMs   = startMs + (nextInterval / sample.intervalCount) * totalDurationMs;
       if (Date.now() < intervalDueMs) continue;
     } else {
-      // ── Production (Sepolia): block-number scheduling ──────────────────────
-      const totalBlocks       = Number(row.endBlock) - Number(row.startBlock);
-      const blocksPerInterval = Math.max(1, Math.floor(totalBlocks / row.intervalCount));
-      const nextDueBlock      = Number(row.startBlock) + nextInterval * blocksPerInterval;
+      const totalBlocks       = Number(sample.endBlock) - Number(sample.startBlock);
+      const blocksPerInterval = Math.max(1, Math.floor(totalBlocks / sample.intervalCount));
+      const nextDueBlock      = Number(sample.startBlock) + nextInterval * blocksPerInterval;
       if (currentBlock < nextDueBlock) continue;
     }
 
-    // Don't re-challenge if already in-flight
-    const key = `${row.dealId}:${nextInterval}`;
-    if (pendingChallenges.has(key)) continue;
-
-    challengePeer(row, nextInterval).catch(err => {
-      console.error(`[proofService] Challenge failed for ${key}: ${err.message}`);
-    });
+    // Challenge only peers that haven't passed nextInterval yet — fire all in parallel.
+    for (const row of peers) {
+      if ((row.intervalsDone ?? 0) >= nextInterval) continue; // already passed this interval
+      const key = `${row.dealId}:${nextInterval}`;
+      if (pendingChallenges.has(key)) continue;
+      challengePeer(row, nextInterval).catch(err => {
+        console.error(`[proofService] Challenge failed for ${key}: ${err.message}`);
+      });
+    }
   }
 }
 
@@ -233,7 +238,7 @@ async function challengePeer(row, interval) {
         `UPDATE storage_contracts SET status = 'COMPLETED' WHERE file_id = $1 AND peer_id = $2`,
         [row.fileId, row.peerId]
       );
-      _dealStartMs.delete(dealId); // clean up cache
+      _fileStartMs.delete(row.fileId); // clean up cache
     }
     console.log(`[proofService] Interval ${interval} released for deal ${dealId.slice(0, 12)}…  tx: ${txHash}`);
 
@@ -255,7 +260,7 @@ async function handleProofFailure(row, interval, reason) {
       `UPDATE storage_contracts SET status = 'SLASHED' WHERE file_id = $1 AND peer_id = $2`,
       [row.fileId, row.peerId]
     );
-    _dealStartMs.delete(row.dealId); // clean up cache
+    _fileStartMs.delete(row.fileId); // clean up cache
     console.log(`[proofService] Deal ${row.dealId.slice(0, 12)}… slashed at interval ${interval}. reason: ${reason}  tx: ${txHash}`);
   } catch (err) {
     console.error(`[proofService] slashDeal failed: ${err.message}`);
