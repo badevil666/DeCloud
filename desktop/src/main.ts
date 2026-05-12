@@ -383,7 +383,19 @@ ipcMain.handle('save-settings', (_event, data: { apiBaseUrl?: string; relayBaseU
         ethService.setRpcUrl(data.rpcUrl);
     }
     if (data.storageCapacityGB !== undefined && data.storageCapacityGB > 0) {
-        authService.setStorageCapacityBytes(Math.round(data.storageCapacityGB * 1_073_741_824));
+        const capacityBytes = Math.round(data.storageCapacityGB * 1_073_741_824);
+        authService.setStorageCapacityBytes(capacityBytes);
+
+        // Sync to backend DB (fire-and-forget — local setting is already saved)
+        const token = authService.getToken();
+        if (token) {
+            axios.patch(`${authService.getApiBaseUrl()}/peer/capacity`, { capacityBytes }, {
+                headers: { Authorization: `Bearer ${token}` },
+                timeout: 5000,
+            }).catch((err: any) => {
+                console.warn('⚠️ Failed to sync capacity to backend:', err?.message ?? err);
+            });
+        }
     }
     return { ok: true };
 });

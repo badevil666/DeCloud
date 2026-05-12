@@ -189,4 +189,29 @@ router.get('/files', authenticate('STORAGE_PEER'), async (req, res) => {
   }
 });
 
+/**
+ * PATCH /peer/capacity
+ * Update the declared storage capacity for this peer (user-editable in settings).
+ * Body: { capacityBytes: number }
+ */
+router.patch('/capacity', authenticate('STORAGE_PEER'), async (req, res) => {
+  const peerId = req.user.sub;
+  const { capacityBytes } = req.body;
+
+  if (!capacityBytes || typeof capacityBytes !== 'number' || capacityBytes < 1) {
+    return res.status(400).json({ error: 'capacityBytes must be a positive number' });
+  }
+
+  try {
+    await query(
+      'UPDATE storage_peers SET declared_capacity = $1 WHERE peer_id = $2',
+      [Math.round(capacityBytes), peerId],
+    );
+    res.json({ updated: true, capacityBytes: Math.round(capacityBytes) });
+  } catch (err) {
+    console.error('[peer/capacity]', err.message);
+    res.status(500).json({ error: 'Failed to update capacity' });
+  }
+});
+
 module.exports = router;
