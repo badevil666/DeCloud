@@ -77,7 +77,7 @@ export async function getDCLDBalance(
     address: string,
     provider: ethers.JsonRpcProvider,
 ): Promise<string> {
-    const token = new ethers.Contract(DCLD_TOKEN_ADDR, ERC20_ABI, provider);
+    const token = new ethers.Contract(getLiveDcldTokenAddr(), ERC20_ABI, provider);
     const [raw, decimals]: [bigint, bigint] = await Promise.all([
         (token as any).balanceOf(address),
         (token as any).decimals(),

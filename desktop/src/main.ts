@@ -62,7 +62,7 @@ async function pushBalances(): Promise<void> {
 
     try {
         const [ethBal, dcldBal] = await Promise.all([
-            ethService.getETHBalance(wallet.address, provider),
+            ethService.getETHBalance(wallet.address, provider).catch(() => '0'),
             ethService.getDCLDBalance(wallet.address, provider).catch(() => '0'),
         ]);
 
@@ -189,7 +189,7 @@ function onAuthSuccess(): void {
 async function fetchAndApplyNetworkConfig(): Promise<void> {
     try {
         const res = await axios.get(`${authService.getApiBaseUrl()}/network-config`, { timeout: 5000 });
-        const cfg = res.data as { dcldTokenAddress?: string; rpcUrl?: string; escrowAddress?: string };
+        const cfg = res.data as { dcldTokenAddress?: string; escrowAddress?: string };
         if (cfg.dcldTokenAddress) {
             ethService.setDcldTokenAddr(cfg.dcldTokenAddress);
             authService.setDcldTokenAddress(cfg.dcldTokenAddress);
@@ -199,10 +199,6 @@ async function fetchAndApplyNetworkConfig(): Promise<void> {
             ethService.setEscrowAddr(cfg.escrowAddress);
             authService.setEscrowAddress(cfg.escrowAddress);
             console.log(`[network-config] Escrow:      ${cfg.escrowAddress}`);
-        }
-        if (cfg.rpcUrl) {
-            ethService.setRpcUrl(cfg.rpcUrl);
-            console.log(`[network-config] RPC:         ${cfg.rpcUrl}`);
         }
     } catch (err: any) {
         console.warn('⚠️ Could not fetch network-config from backend:', err?.message ?? err);
